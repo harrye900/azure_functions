@@ -23,12 +23,10 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: 'Restore project dependencies'
+    - name: 'Build and publish'
       shell: bash
       run: |
-        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-        dotnet build AzureFunctions.csproj --configuration Release --output ./output
-        popd
+        dotnet publish AzureFunctions.csproj --configuration Release --output ./output
 
     - name: 'Azure Login'
       uses: azure/login@v1
