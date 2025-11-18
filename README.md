@@ -1,23 +1,26 @@
-# Azure Functions Simple Application
+# Azure Functions .NET Application
 
 ## Local Development
 
-1. Install Azure Functions Core Tools:
+1. Install .NET 8 SDK:
+   Download from https://dotnet.microsoft.com/download/dotnet/8.0
+
+2. Install Azure Functions Core Tools:
    ```bash
    npm install -g azure-functions-core-tools@4 --unsafe-perm true
    ```
 
-2. Install Python dependencies:
+3. Restore dependencies:
    ```bash
-   pip install -r requirements.txt
+   dotnet restore
    ```
 
-3. Run locally:
+4. Run locally:
    ```bash
    func start
    ```
 
-4. Test the function:
+5. Test the function:
    ```bash
    curl "http://localhost:7071/api/HttpTrigger?name=World"
    ```
@@ -26,6 +29,7 @@
 
 ### Prerequisites
 - Azure CLI installed
+- .NET 8 SDK installed
 - Azure subscription
 
 ### Steps
@@ -47,7 +51,7 @@
 
 4. Create function app (Flex Consumption):
    ```bash
-   az functionapp create --resource-group myResourceGroup --name myFunctionApp --storage-account mystorageaccount --runtime python --runtime-version 3.11 --functions-version 4 --flexconsumption-location eastus
+   az functionapp create --resource-group myResourceGroup --name myFunctionApp --storage-account mystorageaccount --runtime dotnet-isolated --runtime-version 8.0 --functions-version 4 --flexconsumption-location eastus
    ```
 
 5. Deploy the function:
@@ -75,6 +79,7 @@
 
 ## Function Details
 
+- **Runtime**: .NET 8 (Isolated)
 - **Trigger**: HTTP (GET/POST)
 - **Input**: Query parameter or JSON body with "name" field
 - **Output**: JSON response with greeting message
