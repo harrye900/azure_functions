@@ -9,7 +9,7 @@ on:
 env:
   AZURE_FUNCTIONAPP_NAME: 'racetrac001'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
-  PYTHON_VERSION: '3.9'
+  PYTHON_VERSION: '3.11'
 
 jobs:
   build-and-deploy:
@@ -31,12 +31,14 @@ jobs:
         pip install -r requirements.txt --target=".python_packages/lib/site-packages"
         popd
 
+    - name: 'Azure Login'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v1
       id: fa
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-        scm-do-build-during-deployment: true
-        enable-oryx-build: true
