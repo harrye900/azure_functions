@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'racetrac001'
+  AZURE_FUNCTIONAPP_NAME: 'racetrac001-dotnet'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
   DOTNET_VERSION: '8.0.x'
 
