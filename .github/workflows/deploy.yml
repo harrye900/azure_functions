@@ -42,7 +42,7 @@ jobs:
 
     - name: 'Display Application URLs'
       run: |
-        echo "✨ Jesus is Lord - Deployment Complete! ✨"
-        echo "🌐 Web App: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net"
-        echo "🙏 Message API: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/message"
-        echo "❤️ Health Check: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/health"
+        echo "✨ Basic Functions Deployed - Jesus is Lord! ✨"
+        echo "👋 Hello: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/HelloWorld?name=YourName"
+        echo "⏰ Time: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/GetTime"
+        echo "🔄 Echo: POST to https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/Echo"
