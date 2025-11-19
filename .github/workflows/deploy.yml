@@ -28,13 +28,17 @@ jobs:
       run: |
         dotnet publish AzureFunctions.csproj --configuration Release --output ./output
 
-    - name: 'Install Azure Functions Core Tools'
-      run: npm install -g azure-functions-core-tools@4 --unsafe-perm true
+    - name: 'Azure Login'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: 'Deploy with func CLI'
-      run: |
-        echo "${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}" > publish-profile.xml
-        func azure functionapp publish ${{ env.AZURE_FUNCTIONAPP_NAME }} --build local --publish-profile publish-profile.xml
+    - name: 'Deploy to Azure Functions'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
 
     - name: 'Display Application URLs'
       run: |
