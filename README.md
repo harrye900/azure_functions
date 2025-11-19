@@ -1,86 +1,99 @@
-# Azure Functions .NET Application
+# Task Manager - Azure Functions Web Application
+
+A complete web application built with Azure Functions that demonstrates how to create a full-stack application using serverless architecture.
+
+## Features
+
+- ✅ **Complete REST API** for task management
+- ✅ **Web Interface** with HTML/CSS/JavaScript
+- ✅ **CRUD Operations** (Create, Read, Update, Delete)
+- ✅ **Responsive Design** works on mobile and desktop
+- ✅ **Health Check** endpoint for monitoring
+- ✅ **Serverless Architecture** with Azure Functions
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Web application home page |
+| GET | `/api/health` | Health check |
+| GET | `/api/tasks` | Get all tasks |
+| GET | `/api/tasks/{id}` | Get specific task |
+| POST | `/api/tasks` | Create new task |
+| PUT | `/api/tasks/{id}` | Update task |
+| DELETE | `/api/tasks/{id}` | Delete task |
 
 ## Local Development
 
-1. Install .NET 8 SDK:
+1. **Install .NET 8 SDK**:
    Download from https://dotnet.microsoft.com/download/dotnet/8.0
 
-2. Install Azure Functions Core Tools:
+2. **Install Azure Functions Core Tools**:
    ```bash
    npm install -g azure-functions-core-tools@4 --unsafe-perm true
    ```
 
-3. Restore dependencies:
+3. **Restore dependencies**:
    ```bash
    dotnet restore
    ```
 
-4. Run locally:
+4. **Run locally**:
    ```bash
    func start
    ```
 
-5. Test the function:
-   ```bash
-   curl "http://localhost:7071/api/HttpTrigger?name=World"
+5. **Open in browser**:
+   ```
+   http://localhost:7071
    ```
 
 ## Deployment to Azure
 
-### Prerequisites
-- Azure CLI installed
-- .NET 8 SDK installed
-- Azure subscription
+### Create Function App
+```bash
+az functionapp create --resource-group test --name racetrac001-dotnet --storage-account racetrac001 --runtime dotnet-isolated --runtime-version 8.0 --functions-version 4 --flexconsumption-location eastus
+```
 
-### Steps
+### Deploy
+```bash
+dotnet publish --configuration Release
+func azure functionapp publish racetrac001-dotnet
+```
 
-1. Login to Azure:
-   ```bash
-   az login
-   ```
+## Usage Examples
 
-2. Create resource group:
-   ```bash
-   az group create --name myResourceGroup --location eastus
-   ```
+### Create Task (API)
+```bash
+curl -X POST "https://racetrac001-dotnet.azurewebsites.net/api/tasks" \
+-H "Content-Type: application/json" \
+-d '{"title":"Learn Azure Functions","description":"Build a complete web app"}'
+```
 
-3. Create storage account:
-   ```bash
-   az storage account create --name mystorageaccount --location eastus --resource-group myResourceGroup --sku Standard_LRS
-   ```
+### Get All Tasks (API)
+```bash
+curl "https://racetrac001-dotnet.azurewebsites.net/api/tasks"
+```
 
-4. Create function app (Flex Consumption):
-   ```bash
-   az functionapp create --resource-group myResourceGroup --name myFunctionApp --storage-account mystorageaccount --runtime dotnet-isolated --runtime-version 8.0 --functions-version 4 --flexconsumption-location eastus
-   ```
+### Web Interface
+Simply visit: `https://racetrac001-dotnet.azurewebsites.net`
 
-5. Deploy the function:
-   ```bash
-   func azure functionapp publish myFunctionApp
-   ```
+## Architecture
 
-## CI/CD with GitHub Actions
+```
+Frontend (HTML/JS) → Azure Functions → In-Memory Storage
+```
 
-### Setup Automated Deployment
+- **Frontend**: Single-page application with vanilla JavaScript
+- **Backend**: Azure Functions with HTTP triggers
+- **Storage**: In-memory (for demo - use Azure SQL/Cosmos DB for production)
+- **Hosting**: Azure Functions Flex Consumption plan
 
-1. Get publish profile from Azure:
-   ```bash
-   az functionapp deployment list-publishing-profiles --name myFunctionApp --resource-group myResourceGroup --xml
-   ```
+## Production Considerations
 
-2. Add GitHub secret:
-   - Go to GitHub repo → Settings → Secrets → Actions
-   - Add `AZURE_FUNCTIONAPP_PUBLISH_PROFILE` with the XML content
-
-3. Update workflow file:
-   - Change `AZURE_FUNCTIONAPP_NAME` in `.github/workflows/deploy.yml`
-
-4. Push to main branch to trigger deployment
-
-## Function Details
-
-- **Runtime**: .NET 8 (Isolated)
-- **Trigger**: HTTP (GET/POST)
-- **Input**: Query parameter or JSON body with "name" field
-- **Output**: JSON response with greeting message
-- **URL**: `https://myFunctionApp.azurewebsites.net/api/HttpTrigger?name=YourName`
+For production applications, consider:
+- **Database**: Azure SQL Database or Cosmos DB instead of in-memory storage
+- **Authentication**: Azure AD B2C or custom authentication
+- **Caching**: Azure Redis Cache for better performance
+- **Monitoring**: Application Insights for detailed telemetry
+- **Security**: API Management for rate limiting and security
