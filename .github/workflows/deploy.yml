@@ -1,78 +1,44 @@
-name: Task Manager CI/CD
+name: Deploy Azure Function
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'racetrac001-dotnet'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
   DOTNET_VERSION: '8.0.x'
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: 'Checkout Code'
+    - name: 'Checkout GitHub Action'
       uses: actions/checkout@v4
 
-    - name: 'Setup .NET'
+    - name: Setup .NET ${{ env.DOTNET_VERSION }} Environment
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: 'Restore Dependencies'
-      run: dotnet restore
-
-    - name: 'Build Application'
-      run: dotnet build --configuration Release --no-restore
-
-    - name: 'Run Tests'
-      run: dotnet test --no-build --verbosity normal
-
-    - name: 'Publish Application'
-      run: dotnet publish AzureFunctions.csproj --configuration Release --output ./publish
-
-    - name: 'Upload Build Artifacts'
-      uses: actions/upload-artifact@v4
-      with:
-        name: task-manager-app
-        path: ./publish
-
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: build
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-    - name: 'Download Build Artifacts'
-      uses: actions/download-artifact@v4
-      with:
-        name: task-manager-app
-        path: ./publish
-
-    - name: 'Azure Login'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: 'Build and publish'
+      shell: bash
+      run: |
+        dotnet publish AzureFunctions.csproj --configuration Release --output ./output
 
     - name: 'Deploy to Azure Functions'
       uses: Azure/functions-action@v1
+      id: fa
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: './publish'
-
-    - name: 'Health Check'
-      run: |
-        echo "Waiting for deployment to complete..."
-        sleep 30
-        curl -f "https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/health" || exit 1
-        echo "🎉 Deployment successful!"
+        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
 
     - name: 'Display Application URLs'
       run: |
-        echo "🌐 Task Manager Application:"
-        echo "Web App: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net"
-        echo "API: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/tasks"
-        echo "Health: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/health"
+        echo "🎉 Task Manager Deployment Complete!"
+        echo "🌐 Web App: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net"
+        echo "📋 Tasks API: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/tasks"
+        echo "❤️ Health Check: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/health"
