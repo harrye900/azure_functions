@@ -42,7 +42,7 @@ jobs:
 
     - name: 'Display Application URLs'
       run: |
-        echo "🎉 Task Manager Deployment Complete!"
+        echo "✨ Jesus is Lord - Deployment Complete! ✨"
         echo "🌐 Web App: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net"
-        echo "📋 Tasks API: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/tasks"
+        echo "🙏 Message API: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/message"
         echo "❤️ Health Check: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net/api/health"
